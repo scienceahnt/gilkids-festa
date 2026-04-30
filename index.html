@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 길키즈 페스티벌</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
+    h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; }
+    .tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab { font-size: 13px; padding: 6px 14px; border-radius: 8px; border: 1px solid #ddd; background: transparent; color: #888; cursor: pointer; }
+    .tab.active { border: 1.5px solid #378ADD; background: #E6F1FB; color: #0C447C; font-weight: 600; }
+    .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .score-card { border-radius: 12px; padding: 20px; text-align: center; }
+    .score-card.blue { background: #E6F1FB; border: 2px solid #378ADD; }
+    .score-card.red { background: #FCEBEB; border: 2px solid #E24B4A; }
+    .score-card .label { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .score-card.blue .label { color: #185FA5; }
+    .score-card.red .label { color: #A32D2D; }
+    .score-card .num { font-size: 48px; font-weight: 600; line-height: 1; }
+    .score-card.blue .num { color: #0C447C; }
+    .score-card.red .num { color: #791F1F; }
+    .score-card .unit { font-size: 11px; margin-top: 4px; }
+    .score-card.blue .unit { color: #185FA5; }
+    .score-card.red .unit { color: #A32D2D; }
+    .banner { text-align: center; font-size: 13px; color: #666; padding: 8px; background: #f0f0f0; border-radius: 8px; margin-bottom: 16px; }
+    .booth-row { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; }
+    .booth-row-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .booth-name { font-size: 13px; font-weight: 600; flex: 1; }
+    .booth-blue { font-size: 13px; color: #185FA5; }
+    .booth-red { font-size: 13px; color: #A32D2D; }
+    .bar-bg { height: 6px; border-radius: 3px; background: #FCEBEB; overflow: hidden; }
+    .bar-fill { height: 100%; background: #378ADD; border-radius: 3px; transition: width 0.4s; }
+    .card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+    .form-label { font-size: 12px; color: #888; display: block; margin-bottom: 6px; }
+    .booth-selector { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .booth-btn { font-size: 13px; padding: 6px 12px; border-radius: 8px; border: 1px solid #ddd; background: transparent; cursor: pointer; }
+    .booth-btn.selected { border: 1.5px solid #378ADD; background: #E6F1FB; color: #0C447C; font-weight: 600; }
+    .add-row { display: flex; gap: 6px; }
+    .add-row input { flex: 1; font-size: 13px; padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+    .add-row input:focus { border-color: #378ADD; }
+    .add-row button { font-size: 13px; padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: transparent; cursor: pointer; white-space: nowrap; }
+    .input-section { display: none; margin-top: 16px; }
+    .input-section.show { display: block; }
+    .input-section .section-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+    .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .team-box { border-radius: 12px; padding: 14px; text-align: center; }
+    .team-box.blue { background: #E6F1FB; border: 1.5px solid #378ADD; }
+    .team-box.red { background: #FCEBEB; border: 1.5px solid #E24B4A; }
+    .team-label { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+    .team-box.blue .team-label { color: #185FA5; }
+    .team-box.red .team-label { color: #A32D2D; }
+    .team-score { font-size: 32px; font-weight: 600; margin-bottom: 10px; }
+    .team-box.blue .team-score { color: #0C447C; }
+    .team-box.red .team-score { color: #791F1F; }
+    .btn-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+    .btn-plus { padding: 8px 12px; font-size: 13px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .btn-plus.blue { border: 1.5px solid #378ADD; background: #E6F1FB; color: #0C447C; }
+    .btn-plus.red { border: 1.5px solid #E24B4A; background: #FCEBEB; color: #791F1F; }
+    .btn-minus { padding: 8px 10px; font-size: 13px; border-radius: 8px; cursor: pointer; }
+    .btn-minus.blue { border: 1px solid #B5D4F4; background: transparent; color: #185FA5; }
+    .btn-minus.red { border: 1px solid #F7C1C1; background: transparent; color: #A32D2D; }
+    .submit-btn { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; border: 1px solid #ddd; background: #f5f5f5; cursor: pointer; }
+    .submit-btn:hover { background: #eee; }
+    .msg { font-size: 13px; text-align: center; margin-top: 8px; min-height: 18px; }
+    .msg.ok { color: #3B6D11; }
+    .msg.err { color: #A32D2D; }
+    .no-booth { font-size: 13px; color: #888; padding: 8px 0; margin-top: 8px; }
+    .admin-desc { font-size: 13px; color: #888; margin-bottom: 12px; }
+    .danger-btn { padding: 8px 16px; font-size: 13px; border-radius: 8px; border: 1px solid #fca5a5; background: #fef2f2; color: #991b1b; cursor: pointer; margin-right: 8px; margin-bottom: 8px; }
+    .admin-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 6px; }
+    .admin-row .name { font-size: 13px; flex: 1; }
+    .admin-row .bl { font-size: 13px; color: #185FA5; }
+    .admin-row .re { font-size: 13px; color: #A32D2D; }
+    .reset-btn { font-size: 11px; padding: 4px 8px; border-radius: 6px; border: 1px solid #fca5a5; background: transparent; color: #991b1b; cursor: pointer; }
+    .empty { font-size: 13px; color: #888; text-align: center; padding: 16px 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>2026 길키즈 페스티벌</h1>
+  <div class="subtitle">청팀 vs 홍팀 실시간 점수판</div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-board" onclick="setView('board')">전체 게시판</button>
+    <button class="tab" id="tab-input" onclick="setView('input')">부스 점수 입력</button>
+    <button class="tab" id="tab-admin" onclick="setView('admin')">관리</button>
+  </div>
+
+  <!-- 게시판 -->
+  <div id="view-board">
+    <div class="score-grid">
+      <div class="score-card blue">
+        <div class="label">청팀 합계</div>
+        <div class="num" id="blue-total">0</div>
+        <div class="unit">점</div>
+      </div>
+      <div class="score-card red">
+        <div class="label">홍팀 합계</div>
+        <div class="num" id="red-total">0</div>
+        <div class="unit">점</div>
+      </div>
+    </div>
+    <div class="banner" id="lead-banner">불러오는 중...</div>
+    <div id="booth-rows"></div>
+  </div>
+
+  <!-- 점수 입력 -->
+  <div id="view-input" style="display:none;">
+    <div class="card">
+      <label class="form-label">부스 선택</label>
+      <div class="booth-selector" id="booth-selector"></div>
+      <div class="add-row">
+        <input id="new-booth-name" type="text" placeholder="새 부스 이름 추가..." />
+        <button onclick="addBooth()">+ 추가</button>
+      </div>
+      <div class="input-section" id="score-panel">
+        <div class="section-title" id="selected-booth-name"></div>
+        <div class="team-grid">
+          <div class="team-box blue">
+            <div class="team-label">청팀</div>
+            <div class="team-score" id="input-blue-score">0</div>
+            <div class="btn-row">
+              <button class="btn-plus blue" onclick="addScore('blue',10)">+10</button>
+              <button class="btn-plus blue" onclick="addScore('blue',20)">+20</button>
+              <button class="btn-minus blue" onclick="addScore('blue',-10)">-10</button>
+            </div>
+          </div>
+          <div class="team-box red">
+            <div class="team-label">홍팀</div>
+            <div class="team-score" id="input-red-score">0</div>
+            <div class="btn-row">
+              <button class="btn-plus red" onclick="addScore('red',10)">+10</button>
+              <button class="btn-plus red" onclick="addScore('red',20)">+20</button>
+              <button class="btn-minus red" onclick="addScore('red',-10)">-10</button>
+            </div>
+          </div>
+        </div>
+        <button class="submit-btn" onclick="submitBoothScore()">점수 반영하기</button>
+        <div class="msg" id="submit-msg"></div>
+      </div>
+      <div class="no-booth" id="no-booth-msg">부스를 선택하거나 추가해주세요</div>
+    </div>
+  </div>
+
+  <!-- 관리 -->
+  <div id="view-admin" style="display:none;">
+    <div class="card">
+      <div class="admin-desc">점수 및 부스를 초기화할 수 있습니다.</div>
+      <button class="danger-btn" onclick="resetScores()">점수만 초기화</button>
+      <button class="danger-btn" onclick="resetAll()">전체 초기화 (부스+점수)</button>
+      <div class="msg" id="admin-msg"></div>
+      <div style="margin-top:14px; font-size:12px; color:#888; margin-bottom:6px;">부스별 현황</div>
+      <div id="admin-booth-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB = 'https://gilkidsfesta-default-rtdb.firebaseio.com';
+let currentView = 'board';
+let selectedBooth = null;
+let inputBlue = 0;
+let inputRed = 0;
+
+function setView(v) {
+  currentView = v;
+  ['board','input','admin'].forEach(x => {
+    document.getElementById('view-'+x).style.display = x===v ? 'block' : 'none';
+    const t = document.getElementById('tab-'+x);
+    t.className = 'tab' + (x===v ? ' active' : '');
+  });
+  if(v==='board') loadBoard();
+  if(v==='input') loadBoothSelector();
+  if(v==='admin') loadAdmin();
+}
+
+function addScore(team, delta) {
+  if(team==='blue') { inputBlue = Math.max(0, inputBlue+delta); document.getElementById('input-blue-score').textContent = inputBlue; }
+  else { inputRed = Math.max(0, inputRed+delta); document.getElementById('input-red-score').textContent = inputRed; }
+}
+
+async function fbGet(path) {
+  const r = await fetch(DB + path + '.json');
+  return r.ok ? r.json() : null;
+}
+async function fbSet(path, data) {
+  await fetch(DB + path + '.json', { method:'PUT', body: JSON.stringify(data) });
+}
+async function fbDelete(path) {
+  await fetch(DB + path + '.json', { method:'DELETE' });
+}
+
+async function loadBoard() {
+  const data = await fbGet('/sports');
+  const booths = data && data.booths ? data.booths : {};
+  let blueTotal = 0, redTotal = 0;
+  const names = Object.keys(booths);
+  names.forEach(b => { blueTotal += booths[b].blue||0; redTotal += booths[b].red||0; });
+  document.getElementById('blue-total').textContent = blueTotal;
+  document.getElementById('red-total').textContent = redTotal;
+  const banner = document.getElementById('lead-banner');
+  if(blueTotal > redTotal) banner.textContent = '청팀이 ' + (blueTotal-redTotal) + '점 앞서고 있습니다';
+  else if(redTotal > blueTotal) banner.textContent = '홍팀이 ' + (redTotal-blueTotal) + '점 앞서고 있습니다';
+  else if(names.length===0) banner.textContent = '아직 입력된 점수가 없습니다';
+  else banner.textContent = '현재 동점입니다';
+  const rows = document.getElementById('booth-rows');
+  if(names.length===0) {
+    rows.innerHTML = '<div class="empty">부스 점수가 여기에 표시됩니다</div>';
+  } else {
+    rows.innerHTML = names.map(b => {
+      const s = booths[b]; const bl=s.blue||0, re=s.red||0, tot=bl+re;
+      const pct = tot>0 ? Math.round(bl/tot*100) : 50;
+      return `<div class="booth-row">
+        <div class="booth-row-top">
+          <span class="booth-name">${b}</span>
+          <span class="booth-blue">청 ${bl}</span>
+          <span class="booth-red">홍 ${re}</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
+}
+
+async function loadBoothSelector() {
+  const data = await fbGet('/sports');
+  const booths = data && data.booths ? Object.keys(data.booths) : [];
+  const sel = document.getElementById('booth-selector');
+  sel.innerHTML = booths.map(b =>
+    `<button class="booth-btn${selectedBooth===b?' selected':''}" onclick="selectBooth('${b}')">${b}</button>`
+  ).join('');
+}
+
+function selectBooth(name) {
+  selectedBooth = name;
+  inputBlue = 0; inputRed = 0;
+  document.getElementById('input-blue-score').textContent = 0;
+  document.getElementById('input-red-score').textContent = 0;
+  document.getElementById('selected-booth-name').textContent = name + ' 점수 입력';
+  document.getElementById('score-panel').className = 'input-section show';
+  document.getElementById('no-booth-msg').style.display = 'none';
+  loadBoothSelector();
+}
+
+async function addBooth() {
+  const inp = document.getElementById('new-booth-name');
+  const name = inp.value.trim();
+  if(!name) return;
+  const data = await fbGet('/sports/booths/' + encodeURIComponent(name));
+  if(!data) await fbSet('/sports/booths/' + encodeURIComponent(name), {blue:0, red:0});
+  inp.value = '';
+  selectBooth(name);
+}
+
+async function submitBoothScore() {
+  if(!selectedBooth) return;
+  const m = document.getElementById('submit-msg');
+  if(inputBlue===0 && inputRed===0) { m.className='msg err'; m.textContent='점수를 입력해주세요'; return; }
+  const cur = await fbGet('/sports/booths/' + encodeURIComponent(selectedBooth));
+  const prev = cur || {blue:0, red:0};
+  await fbSet('/sports/booths/' + encodeURIComponent(selectedBooth), {
+    blue: (prev.blue||0) + inputBlue,
+    red: (prev.red||0) + inputRed
+  });
+  m.className='msg ok'; m.textContent='반영 완료!';
+  inputBlue = 0; inputRed = 0;
+  document.getElementById('input-blue-score').textContent = 0;
+  document.getElementById('input-red-score').textContent = 0;
+  setTimeout(()=>{ m.textContent=''; }, 2000);
+}
+
+async function loadAdmin() {
+  const data = await fbGet('/sports');
+  const booths = data && data.booths ? data.booths : {};
+  const names = Object.keys(booths);
+  const list = document.getElementById('admin-booth-list');
+  if(names.length===0) { list.innerHTML = '<div class="empty">부스 없음</div>'; return; }
+  list.innerHTML = names.map(b => {
+    const s = booths[b];
+    return `<div class="admin-row">
+      <span class="name">${b}</span>
+      <span class="bl">청 ${s.blue||0}</span>
+      <span class="re">홍 ${s.red||0}</span>
+      <button class="reset-btn" onclick="resetBooth('${b}')">초기화</button>
+    </div>`;
+  }).join('');
+}
+
+async function resetBooth(name) {
+  if(!confirm(name + ' 점수를 초기화합니까?')) return;
+  await fbSet('/sports/booths/' + encodeURIComponent(name), {blue:0, red:0});
+  document.getElementById('admin-msg').textContent = name + ' 초기화 완료';
+  loadAdmin();
+}
+
+async function resetScores() {
+  if(!confirm('모든 부스 점수를 0으로 초기화합니다. 계속하시겠습니까?')) return;
+  const data = await fbGet('/sports');
+  const booths = data && data.booths ? Object.keys(data.booths) : [];
+  for(const b of booths) await fbSet('/sports/booths/' + encodeURIComponent(b), {blue:0, red:0});
+  document.getElementById('admin-msg').textContent = '점수 초기화 완료';
+  loadAdmin();
+}
+
+async function resetAll() {
+  if(!confirm('모든 부스와 점수를 삭제합니다. 계속하시겠습니까?')) return;
+  await fbDelete('/sports');
+  selectedBooth = null;
+  document.getElementById('admin-msg').textContent = '전체 초기화 완료';
+  loadAdmin();
+}
+
+loadBoard();
+setInterval(()=>{ if(currentView==='board') loadBoard(); }, 5000);
+</script>
+</body>
+</html>
